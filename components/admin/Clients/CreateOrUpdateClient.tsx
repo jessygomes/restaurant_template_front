@@ -1,49 +1,54 @@
 "use client";
-import { FormError } from "@/components/auth/FormError";
-import { FormSuccess } from "@/components/auth/FormSuccess";
-import { Table } from "@/lib/type";
-import { tableSchema } from "@/lib/zod/validator.schema";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Client } from "@/lib/type";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { FormError } from "@/components/auth/FormError";
+import { FormSuccess } from "@/components/auth/FormSuccess";
+import { clientSchema } from "@/lib/zod/validator.schema";
+import { toast } from "sonner";
 
-export default function CreateOrUpdateTable({
+export default function CreateOrUpdateClient({
   userId,
   onCreate,
-  existingTable,
+  existingClient,
   setIsOpen = () => {},
 }: {
   userId: string;
   onCreate: () => void;
-  existingTable?: Table;
+  existingClient?: Client | null;
   setIsOpen?: (isOpen: boolean) => void;
 }) {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [loading, setLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof tableSchema>>({
-    resolver: zodResolver(tableSchema),
+  const form = useForm<z.infer<typeof clientSchema>>({
+    resolver: zodResolver(clientSchema),
     defaultValues: {
-      name: existingTable?.name || "",
-      type: existingTable?.type || "",
-      capacity: existingTable?.capacity || 1,
+      firstName: existingClient?.firstName || "",
+      lastName: existingClient?.lastName || "",
+      phone: existingClient?.phone || "",
+      email: existingClient?.email || "",
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof tableSchema>) => {
+  const onSubmit = async (data: z.infer<typeof clientSchema>) => {
     setLoading(true);
     setError("");
     setSuccess("");
 
-    const url = existingTable
-      ? `${process.env.NEXT_PUBLIC_BACK_URL}/tables/${existingTable.id}`
-      : `${process.env.NEXT_PUBLIC_BACK_URL}/tables`;
+    console.log("USER ID :", userId);
+    console.log("Données du formulaire :", data, userId);
+
+    const url = existingClient
+      ? `${process.env.NEXT_PUBLIC_BACK_URL}/client/update/${existingClient.id}`
+      : `${process.env.NEXT_PUBLIC_BACK_URL}/client/create`;
 
     try {
       const response = await fetch(url, {
-        method: existingTable ? "PATCH" : "POST",
+        method: existingClient ? "PATCH" : "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -60,13 +65,18 @@ export default function CreateOrUpdateTable({
       }
 
       const result = await response.json();
-      setSuccess(result.message || "Table créée avec succès !");
+      setSuccess(result.message || "Client créé avec succès !");
       form.reset();
       onCreate();
     } catch (error) {
-      console.error("Erreur lors de la création de la table :", error);
-      setError("Une erreur est survenue lors de la création de la table.");
+      console.error("Erreur lors de la création du client :", error);
+      setError("Une erreur est survenue lors de la création du client.");
     } finally {
+      toast.success(
+        existingClient
+          ? "Client modifié avec succès !"
+          : "Client créé avec succès !"
+      );
       setLoading(false);
     }
   };
@@ -76,52 +86,70 @@ export default function CreateOrUpdateTable({
       <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
           <h2 className="text-lg font-semibold font-one text-secondary-500 mb-4">
-            {existingTable ? `${existingTable.name}` : "Nouvelle table"}
+            {existingClient
+              ? `${existingClient.firstName} ${existingClient.lastName}`
+              : "Nouveau client"}
           </h2>
 
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="flex gap-4">
+              <div>
+                <label className="block text-sm font-medium font-one text-secondary-500">
+                  Prénom
+                </label>
+                <input
+                  {...form.register("firstName")}
+                  className="w-full mt-1 border border-gray-300 px-3 py-2 text-black text-sm"
+                />
+                {form.formState.errors.firstName && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.firstName.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium font-one text-secondary-500">
+                  Nom
+                </label>
+                <input
+                  {...form.register("lastName")}
+                  className="w-full mt-1 border border-gray-300 px-3 py-2 text-black text-sm"
+                />
+                {form.formState.errors.lastName && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.lastName.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
             <div>
               <label className="block text-sm font-medium font-one text-secondary-500">
-                Type (Terrasse, Intérieur, etc.)
+                Email
               </label>
               <input
-                {...form.register("type")}
+                {...form.register("email")}
                 className="w-full mt-1 border border-gray-300 px-3 py-2 text-black text-sm"
               />
-              {form.formState.errors.type && (
+              {form.formState.errors.email && (
                 <p className="text-red-500 text-sm mt-1">
-                  {form.formState.errors.type.message}
+                  {form.formState.errors.email.message}
                 </p>
               )}
             </div>
 
             <div>
               <label className="block text-sm font-medium font-one text-secondary-500">
-                Nom
+                Téléphone
               </label>
               <input
-                {...form.register("name")}
+                {...form.register("phone")}
                 className="w-full mt-1 border border-gray-300 px-3 py-2 text-black text-sm"
               />
-              {form.formState.errors.name && (
+              {form.formState.errors.phone && (
                 <p className="text-red-500 text-sm mt-1">
-                  {form.formState.errors.name.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium font-one text-secondary-500">
-                Capacité
-              </label>
-              <input
-                type="number"
-                {...form.register("capacity")}
-                className="w-full mt-1 border border-gray-300 px-3 py-2 text-black text-sm"
-              />
-              {form.formState.errors.capacity && (
-                <p className="text-red-500 text-sm mt-1">
-                  {form.formState.errors.capacity.message}
+                  {form.formState.errors.phone.message}
                 </p>
               )}
             </div>
@@ -142,12 +170,12 @@ export default function CreateOrUpdateTable({
                 className="w-full text-secondary-500 font-one tracking-wide text-sm font-bold border px-4 py-2  hover:bg-secondary-500 hover:border-secondary-500 hover:text-white transition-all ease-in-out duration-300 cursor-pointer"
               >
                 {loading
-                  ? existingTable
+                  ? existingClient
                     ? "Modification en cours..."
                     : "Création en cours..."
-                  : existingTable
+                  : existingClient
                   ? "Modifier"
-                  : "Créer une table"}
+                  : "Créer un client"}
               </button>
             </div>
           </form>

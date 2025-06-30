@@ -114,7 +114,7 @@ export default function TableList({ userId }: { userId: string }) {
             value={filterReserved}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onChange={(e) => setFilterReserved(e.target.value as any)}
-            className="border px-2 py-1 text-sm text-noir-500"
+            className="border border-gray-300 px-2 py-1 text-xs text-noir-500"
           >
             <option value="all">Trier par disponibilité</option>
             <option value="reserved">Réservées</option>
@@ -124,7 +124,7 @@ export default function TableList({ userId }: { userId: string }) {
           <select
             value={capacityFilter}
             onChange={(e) => setCapacityFilter(e.target.value)}
-            className="border px-2 py-1 text-sm text-noir-500"
+            className="border border-gray-300 px-2 py-1 text-xs text-noir-500"
           >
             <option value="all">Trier par capacité</option>
             {availableCapacities.map((cap) => (
@@ -137,7 +137,7 @@ export default function TableList({ userId }: { userId: string }) {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="border px-2 py-1 text-sm text-noir-500"
+            className="border border-gray-300 px-2 py-1 text-xs text-noir-500"
           >
             <option value="all">Trier par salle</option>
             {availableTypes.map((type) => (

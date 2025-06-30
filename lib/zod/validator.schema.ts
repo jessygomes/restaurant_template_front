@@ -81,3 +81,35 @@ export const reservationSchema = z.object({
     phone: z.string().min(5, "Téléphone requis"),
   }),
 });
+
+//! CLIENT
+export const clientSchema = z.object({
+  firstName: z.string().min(1, "Le prénom est requis"),
+  lastName: z.string().min(1, "Le nom est requis"),
+  phone: z.string().min(5, "Le téléphone est requis"),
+  email: z.string().email("Un email valide est requis"),
+});
+
+//! CATEGORY
+export const categorySchema = z.object({
+  name: z.string().min(1, "Le nom de la catégorie est requis"),
+  type: z.enum(["Saisonnier", "Suggestion", "Signature"]),
+});
+
+//! MENU
+export const menuSchema = z.object({
+  title: z.string().min(1, "Le nom du menu est requis"),
+  description: z.string().min(1, "La description est requise"),
+  price: z.coerce.number().min(0.01, "Le prix doit être supérieur à 0"),
+  image: z.string().optional(),
+  ingredients: z.array(z.object({ value: z.string().min(1) })).refine(
+    (items) => {
+      const values = items.map((i) => i.value.toLowerCase().trim());
+      return new Set(values).size === values.length;
+    },
+    { message: "Les ingrédients doivent être uniques" }
+  ),
+  // .min(1, "Au moins un ingrédient est requis"),
+  available: z.boolean(),
+  categoryId: z.string().min(1, "La catégorie est requise"),
+});

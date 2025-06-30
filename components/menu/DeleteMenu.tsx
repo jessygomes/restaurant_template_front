@@ -1,15 +1,16 @@
 "use client";
 import { FormError } from "@/components/auth/FormError";
 import { FormSuccess } from "@/components/auth/FormSuccess";
-import { Table } from "@/lib/type";
+import { getSessionToken } from "@/lib/session";
+import { MenuProps } from "@/lib/type";
 import React, { useState } from "react";
 
-export default function DeleteTable({
-  table,
+export default function DeleteMenu({
+  menu,
   onDelete,
   setIsOpen = () => {},
 }: {
-  table?: Table;
+  menu?: MenuProps;
   onDelete: () => void;
   setIsOpen?: (isOpen: boolean) => void;
 }) {
@@ -17,25 +18,31 @@ export default function DeleteTable({
   const [success, setSuccess] = useState<string | undefined>("");
   const [error, setError] = useState("");
 
-  if (!table) {
+  if (!menu) {
     return (
       <div className="text-red-500">
-        Aucune table sélectionnée pour la suppression.
+        Aucun menu sélectionné pour la suppression.
       </div>
     );
   }
 
   const handleDelete = async () => {
-    if (!table.id) return;
+    if (!menu.id) return;
+
+    const token = await getSessionToken();
 
     setLoading(true);
     setError("");
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACK_URL}/tables/${table.id}`,
+        `${process.env.NEXT_PUBLIC_BACK_URL}/menu/item/${menu.id}`,
         {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -44,7 +51,7 @@ export default function DeleteTable({
         throw new Error(data.message || "Erreur lors de la suppression");
       }
 
-      setSuccess("Table supprimée avec succès");
+      setSuccess("Plat supprimé avec succès");
       setIsOpen(false);
       onDelete(); // pour refresh
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60,11 +67,11 @@ export default function DeleteTable({
       <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
           <h2 className="text-lg font-semibold font-one text-secondary-500 mb-4">
-            {`Confirmer la suppression : ${table.name}`}
+            {`Confirmer la suppression : ${menu.title}`}
           </h2>
 
           <p className="text-sm text-noir-500 mb-4">
-            Es-tu sûr de vouloir supprimer cette table ? Cette action est
+            Es-tu sûr de vouloir supprimer ce plat ? Cette action est
             irréversible.
           </p>
 

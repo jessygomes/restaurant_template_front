@@ -57,7 +57,16 @@ export interface Client {
   lastName: string;
   phone: string;
   email: string;
+  reservation: ReservationForClientPage[];
   // ...autres champs
+}
+
+interface ReservationForClientPage {
+  date: string;
+  arrivalTime: string;
+  guests: number;
+  status: "Attente" | "Confirmée" | "Annulée";
+  isPrivate?: boolean;
 }
 
 export interface ReservationOnTable {
@@ -74,4 +83,26 @@ export interface Table {
   type: string;
   capacity: number;
   isReserved: boolean;
+}
+
+export interface MenuProps {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  image: string;
+  ingredients: string[];
+  available: boolean;
+  categoryId: string;
+  category?: {
+    id: string;
+    name: string;
+    type: string;
+  };
+}
+
+export interface CategoryProps {
+  id: string;
+  name: string;
+  type: string;
 }

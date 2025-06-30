@@ -31,3 +31,8 @@ export async function deleteSession() {
   cookieStore.delete("session");
   cookieStore.delete("userId");
 }
+
+export async function getSessionToken() {
+  const cookieStore = await cookies();
+  return cookieStore.get("session")?.value;
+}
