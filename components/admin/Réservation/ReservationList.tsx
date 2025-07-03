@@ -226,7 +226,7 @@ export default function ReservationList({ userId }: { userId: string }) {
           </select>
         </div>
 
-        <div className="grid grid-cols-7 gap-2 px-4 py-2 text-secondary-500 text-xs font-bold">
+        <div className="grid grid-cols-8 gap-2 px-4 py-2 text-secondary-500 text-xs font-bold">
           <p>Date</p>
           <p>Heure d&apos;arrivée</p>
           <p>Nb de couvert</p>
@@ -242,7 +242,7 @@ export default function ReservationList({ userId }: { userId: string }) {
           filteredReservations.map((resa) => (
             <div
               key={resa.id}
-              className="grid grid-cols-7 justify-center items-center gap-2 bg-gray-200 p-2 mb-2"
+              className="grid grid-cols-8 justify-center items-center gap-2 bg-gray-200 hover:bg-gray-300 duration-200 p-2 mb-2"
             >
               <p className="text-gray-600 text-xs">
                 {new Date(resa.date).toLocaleDateString("fr-FR")}

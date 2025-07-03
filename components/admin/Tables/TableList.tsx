@@ -162,7 +162,7 @@ export default function TableList({ userId }: { userId: string }) {
           filteredTables.map((table) => (
             <div
               key={table.id}
-              className="grid grid-cols-5 justify-center items-center gap-2 bg-gray-200 p-4 mb-2"
+              className="grid grid-cols-5 justify-center items-center gap-2 bg-gray-200 hover:bg-gray-300 duration-200 p-4 mb-2"
             >
               <h2 className="font-one font-semibold text-secondary-500">
                 {table.type}

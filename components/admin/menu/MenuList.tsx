@@ -178,7 +178,7 @@ export default function MenuList({ userId }: { userId: string }) {
           filteredMenus.map((menu) => (
             <div
               key={menu.id}
-              className="grid grid-cols-6 justify-center items-center gap-2 bg-gray-200 p-4 mb-2"
+              className="grid grid-cols-6 justify-center items-center gap-2 bg-gray-200 hover:bg-gray-300 duration-200 p-4 mb-2"
             >
               <h2 className="font-one font-semibold text-xs text-secondary-500">
                 {menu.title}

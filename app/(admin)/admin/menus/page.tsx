@@ -1,4 +1,4 @@
-import MenuList from "@/components/menu/MenuList";
+import MenuList from "@/components/admin/menu/MenuList";
 import { currentUser } from "@/lib/auth.server";
 import { redirect } from "next/navigation";
 import React from "react";

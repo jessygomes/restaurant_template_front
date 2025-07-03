@@ -113,3 +113,35 @@ export const menuSchema = z.object({
   available: z.boolean(),
   categoryId: z.string().min(1, "La catégorie est requise"),
 });
+
+//! EVENT
+export const eventSchema = z.object({
+  title: z.string().min(1, "Le titre de l'événement est requis"),
+  description: z.string().min(1, "La description est requise"),
+  date: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "Date invalide",
+  }),
+  image: z.string().optional(),
+  banner: z.string().optional(),
+});
+
+//! ACTUS
+export const actusSchema = z.object({
+  title: z.string().min(1, "Le titre de l'actualité est requis"),
+  content: z.string().min(1, "Le contenu de l'actualité est requis"),
+  image: z.string().optional(),
+});
+
+//! BANNER
+export const bannerSchema = z.object({
+  title: z.string().min(1, "Le titre de la bannière est requis"),
+  image: z.string().optional(),
+  link: z.string().optional(),
+  startsAt: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "Date de début invalide",
+  }),
+  endsAt: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "Date de fin invalide",
+  }),
+  isActive: z.boolean().optional(),
+});

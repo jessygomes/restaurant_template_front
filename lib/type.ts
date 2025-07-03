@@ -106,3 +106,30 @@ export interface CategoryProps {
   name: string;
   type: string;
 }
+
+export interface EventProps {
+  id: string;
+  title: string;
+  description: string;
+  date: string; // ou Date si tu les manipules directement comme objets Date
+  image?: string;
+  banner?: string;
+}
+
+export interface ActusProps {
+  id: string;
+  title: string;
+  content: string;
+  image?: string;
+  publishedAt: string; // ou Date si tu les manipules directement comme objets Date
+}
+
+export interface BannerProps {
+  id: string;
+  title: string;
+  link?: string;
+  image?: string;
+  startsAt: string; // ou Date si tu les manipules directement comme objets Date
+  endsAt: string; // ou Date si tu les manipules directement comme objets Date
+  isActive: boolean;
+}

@@ -5,8 +5,8 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { categorySchema } from "@/lib/zod/validator.schema";
 import { toast } from "sonner";
-import { FormError } from "../auth/FormError";
-import { FormSuccess } from "../auth/FormSuccess";
+import { FormError } from "../../auth/FormError";
+import { FormSuccess } from "../../auth/FormSuccess";
 import { getSessionToken } from "@/lib/session";
 
 export default function CreateCategory({
