@@ -21,6 +21,7 @@ export default function Home() {
           <HeroSection />
         </div>
       </div>
+
       <Section3 />
 
       <Section2 />

@@ -27,7 +27,9 @@ export default function CreateOrUpdateEvent({
     defaultValues: {
       title: existingEvent?.title || "",
       description: existingEvent?.description || "",
-      date: existingEvent?.date || "",
+      date: existingEvent?.date
+        ? new Date(existingEvent.date).toISOString().slice(0, 16)
+        : "",
       image: existingEvent?.image || "",
       banner: existingEvent?.banner || "",
     },
