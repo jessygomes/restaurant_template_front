@@ -82,6 +82,20 @@ export const reservationSchema = z.object({
   }),
 });
 
+export const reservationClientSchema = z.object({
+  date: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "Date invalide",
+  }),
+  arrivalTime: timeSchema,
+  guests: z.coerce.number().int().min(1, "Nombre de convives requis"),
+  client: z.object({
+    email: z.string().email(),
+    firstName: z.string().min(1, "Prénom requis"),
+    lastName: z.string().min(1, "Nom requis"),
+    phone: z.string().min(5, "Téléphone requis"),
+  }),
+});
+
 //! CLIENT
 export const clientSchema = z.object({
   firstName: z.string().min(1, "Le prénom est requis"),

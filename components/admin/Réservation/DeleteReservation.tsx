@@ -73,7 +73,7 @@ export default function DeleteReservation({
   return (
     <div>
       <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-        <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
+        <div className="bg-white rounded-xs p-6 w-full max-w-md shadow-lg relative">
           <h2 className="text-lg font-semibold font-one text-secondary-500 mb-4">
             {`Confirmer la suppression : ${date} - ${hour} - ${reservation.client?.lastName}`}
           </h2>

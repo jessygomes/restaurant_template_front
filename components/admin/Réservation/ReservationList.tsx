@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useEffect, useState } from "react";
 import { IoCreateOutline } from "react-icons/io5";
@@ -19,18 +21,20 @@ export default function ReservationList({ userId }: { userId: string }) {
   const [filterStatus, setFilterStatus] = useState<
     "all" | "pending" | "confirmed" | "cancelled"
   >("all");
-  const [filterDate, setFilterDate] = useState<string>("");
+  const [filterDateRange, setFilterDateRange] = useState<
+    "all" | "today" | "week" | "month" | "upcoming" | "past"
+  >("upcoming");
   const [availableDates, setAvailableDates] = useState<string[]>([]);
   const [filterClient, setFilterClient] = useState<string>("");
   const [filterPrivate, setFilterPrivate] = useState<
     "all" | "private" | "public"
   >("all");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [availableClients, setAvailableClients] = useState<string[]>([]);
 
   //! Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+  const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
 
   //! Récupère les réservations
   const fetchReservations = async () => {
@@ -66,6 +70,34 @@ export default function ReservationList({ userId }: { userId: string }) {
     fetchReservations();
   }, []);
 
+  //! CLOTURER UNE RÉSERVATION
+  const confirmCloseReservation = async () => {
+    if (!selectedReservation) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACK_URL}/reservation/finish/${selectedReservation.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "Clôturé" }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Erreur lors de la clôture");
+
+      toast(
+        `Réservation de ${selectedReservation.client?.firstName} ${selectedReservation.client?.lastName} clôturée avec succès !`
+      );
+
+      await fetchReservations();
+      setIsCloseModalOpen(false);
+      setSelectedReservation(null);
+    } catch (err) {
+      console.error("Erreur clôture :", err);
+    }
+  };
+
   //! Handlers pour les actions
   const handleEdit = (reservation: ReservationListItem) => {
     setSelectedReservation(reservation);
@@ -82,6 +114,11 @@ export default function ReservationList({ userId }: { userId: string }) {
     setIsModalOpen(true);
   };
 
+  const handleCloseReservation = (reservation: ReservationListItem) => {
+    setSelectedReservation(reservation);
+    setIsCloseModalOpen(true);
+  };
+
   //! Filtrage des réservations
   const statusMap: Record<"pending" | "confirmed" | "cancelled", string> = {
     pending: "Attente",
@@ -90,10 +127,43 @@ export default function ReservationList({ userId }: { userId: string }) {
   };
 
   const filteredReservations = reservations.filter((reservation) => {
-    const dateMatch = !filterDate || reservation.date === filterDate;
+    // Filtrage par date
+    const now = new Date();
+    const resDate = new Date(reservation.date);
+    let dateMatch = true;
+
+    switch (filterDateRange) {
+      case "today":
+        dateMatch = resDate.toDateString() === now.toDateString();
+        break;
+      case "week":
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay());
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        dateMatch = resDate >= startOfWeek && resDate <= endOfWeek;
+        break;
+      case "month":
+        dateMatch =
+          resDate.getMonth() === now.getMonth() &&
+          resDate.getFullYear() === now.getFullYear();
+        break;
+      case "upcoming":
+        dateMatch = resDate > now;
+        break;
+      case "past":
+        dateMatch = resDate < now;
+        break;
+      default:
+        dateMatch = true;
+    }
+
+    // Filtrage par statut
     const statusMatch =
       filterStatus === "all" ||
       reservation.status === statusMap[filterStatus as keyof typeof statusMap];
+
+    // Filtrage par client
     const clientMatch =
       !filterClient ||
       [
@@ -105,6 +175,8 @@ export default function ReservationList({ userId }: { userId: string }) {
         .join(" ")
         .toLowerCase()
         .includes(filterClient.toLowerCase());
+
+    // Filtrage par privatisation
     const privateMatch =
       filterPrivate === "all" ||
       (filterPrivate === "private" && reservation.isPrivate) ||
@@ -112,8 +184,6 @@ export default function ReservationList({ userId }: { userId: string }) {
 
     return dateMatch && statusMatch && clientMatch && privateMatch;
   });
-
-  console.log("Reservations for today:", filteredReservations);
 
   //! MODIFIER LE STATUT DES RÉSERVATIONS
   const handleStatusChange = async (id: string, newStatus: string) => {
@@ -178,16 +248,26 @@ export default function ReservationList({ userId }: { userId: string }) {
 
         <div className="flex gap-4 items-center mb-4">
           <select
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
+            value={filterDateRange}
+            onChange={(e) =>
+              setFilterDateRange(
+                e.target.value as
+                  | "all"
+                  | "today"
+                  | "week"
+                  | "month"
+                  | "upcoming"
+                  | "past"
+              )
+            }
             className="border border-gray-300 px-2 py-1 text-xs text-noir-500"
           >
-            <option value="">Trier par date</option>
-            {availableDates.map((date) => (
-              <option key={date} value={date}>
-                {new Date(date).toLocaleDateString("fr-FR")}
-              </option>
-            ))}
+            <option value="all">Toutes les dates</option>
+            <option value="today">Aujourd’hui</option>
+            <option value="week">Cette semaine</option>
+            <option value="month">Ce mois-ci</option>
+            <option value="upcoming">À venir</option>
+            <option value="past">Passées</option>
           </select>
 
           <input
@@ -226,7 +306,7 @@ export default function ReservationList({ userId }: { userId: string }) {
           </select>
         </div>
 
-        <div className="grid grid-cols-8 gap-2 px-4 py-2 text-secondary-500 text-xs font-bold">
+        <div className="grid grid-cols-9 gap-2 px-4 py-2 text-secondary-500 text-xs font-bold">
           <p>Date</p>
           <p>Heure d&apos;arrivée</p>
           <p>Nb de couvert</p>
@@ -242,7 +322,7 @@ export default function ReservationList({ userId }: { userId: string }) {
           filteredReservations.map((resa) => (
             <div
               key={resa.id}
-              className="grid grid-cols-8 justify-center items-center gap-2 bg-gray-200 hover:bg-gray-300 duration-200 p-2 mb-2"
+              className="grid grid-cols-9 justify-center items-center gap-2 bg-gray-200 hover:bg-gray-300 duration-200 p-2 mb-2"
             >
               <p className="text-gray-600 text-xs">
                 {new Date(resa.date).toLocaleDateString("fr-FR")}
@@ -286,6 +366,17 @@ export default function ReservationList({ userId }: { userId: string }) {
                       .join(", ")
                   : "—"}
               </p>
+              <button
+                onClick={() => handleCloseReservation(resa)}
+                disabled={resa.isFinished === true}
+                className={`cursor-pointer text-noir-700 text-xs font-one  p-1   duration-200 ${
+                  resa.isFinished
+                    ? "opacity-50 bg-secondary-500 text-white cursor-not-allowed"
+                    : "bg-gray-400 hover:bg-gray-600 hover:text-white"
+                }`}
+              >
+                {resa.isFinished ? "Terminé" : "Clôturer"}
+              </button>
               <div className="flex gap-2 text-xs items-center justify-center">
                 <button
                   className="cursor-pointer text-black"
@@ -333,6 +424,43 @@ export default function ReservationList({ userId }: { userId: string }) {
           setIsOpen={setIsModalDeleteOpen}
           reservation={selectedReservation ?? undefined}
         />
+      )}
+
+      {isCloseModalOpen && selectedReservation && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white rounded-xs p-6 w-full max-w-md shadow-lg relative">
+            <h2 className="text-lg font-semibold font-one text-secondary-500 mb-4">
+              Confirmer la clôture
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Êtes-vous sûr de vouloir clôturer la réservation de{" "}
+              <strong>
+                {selectedReservation.client?.firstName}{" "}
+                {selectedReservation.client?.lastName}
+              </strong>{" "}
+              du{" "}
+              {new Date(selectedReservation.date).toLocaleDateString("fr-FR")} ?
+            </p>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setIsCloseModalOpen(false);
+                  setSelectedReservation(null);
+                }}
+                className="w-full text-noir-500 font-one tracking-wide text-sm font-bold border px-4 py-2  hover:bg-noir-500 hover:border-noir-500 hover:text-white transition-all ease-in-out duration-300 cursor-pointer"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={confirmCloseReservation}
+                className="w-full text-secondary-500 font-one tracking-wide text-sm font-bold border px-4 py-2  hover:bg-secondary-500 hover:border-secondary-500 hover:text-white transition-all ease-in-out duration-300 cursor-pointer"
+              >
+                Confirmer
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   );

@@ -92,6 +92,8 @@ export default function TableList({ userId }: { userId: string }) {
     return true;
   });
 
+  console.log("Tables filtrées :", tables);
+
   //! Affichage des tables
   return (
     <section>
@@ -148,12 +150,12 @@ export default function TableList({ userId }: { userId: string }) {
           </select>
         </div>
 
-        <div className="grid grid-cols-5 gap-2 px-4 py-2 text-secondary-500 text-xs font-bold">
+        <div className="grid grid-cols-6 gap-2 px-4 py-2 text-secondary-500 text-xs font-bold">
           <p>Type</p>
           <p>Nom</p>
           <p>Capacités</p>
           <p>Statut</p>
-          <p></p>
+          <p>Prochaine réservation</p>
         </div>
 
         {loading ? (
@@ -162,7 +164,7 @@ export default function TableList({ userId }: { userId: string }) {
           filteredTables.map((table) => (
             <div
               key={table.id}
-              className="grid grid-cols-5 justify-center items-center gap-2 bg-gray-200 hover:bg-gray-300 duration-200 p-4 mb-2"
+              className="grid grid-cols-6 justify-center items-center gap-2 bg-gray-200 hover:bg-gray-300 duration-200 p-4 mb-2"
             >
               <h2 className="font-one font-semibold text-secondary-500">
                 {table.type}
@@ -180,6 +182,20 @@ export default function TableList({ userId }: { userId: string }) {
               >
                 {" "}
                 {table.isReserved ? "Réservée" : "Disponible"}
+              </p>
+              <p className="text-xs text-gray-600">
+                {table.nextReservation
+                  ? new Date(table.nextReservation.date).toLocaleDateString(
+                      "fr-FR"
+                    ) +
+                    " | " +
+                    new Date(
+                      table.nextReservation.arrivalTime
+                    ).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : "Aucune réservation"}
               </p>
               <div className="flex gap-2 text-xs items-center justify-center">
                 <button

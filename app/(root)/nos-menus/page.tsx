@@ -28,11 +28,18 @@ export default function NosMenus() {
         </div>
       </div>
 
-      <div className="pb-10">
+      <div className="">
         <ShowMenus />
       </div>
 
-      <ReserveTableForm />
+      {/* <div className="h-[1px] bg-secondary-500 mx-auto my-10 w-1/2" /> */}
+
+      <div className="pt-4 pb-20 px-20 flex flex-col gap-4 justify-center bg-noir-500/10">
+        <h3 className="font-one text-center text-2xl text-noir-700">
+          Réserver une table
+        </h3>
+        <ReserveTableForm />
+      </div>
     </div>
   );
 }

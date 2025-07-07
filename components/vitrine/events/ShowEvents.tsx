@@ -61,7 +61,7 @@ export default function ShowEvents() {
         </h2>
 
         {upcomingEvents.length === 0 ? (
-          <p className="font-one text-gray-500 text-center italic">
+          <p className="font-one text-gray-500 bg-gray-200 p-4 text-center italic">
             Aucun événement à venir.
           </p>
         ) : (
@@ -115,7 +115,7 @@ export default function ShowEvents() {
         </h2>
 
         {pastEvents.length === 0 ? (
-          <p className="font-one text-gray-500 text-center italic">
+          <p className="font-one text-gray-500 bg-gray-200 p-4 text-center italic">
             Aucun événement passé.
           </p>
         ) : (

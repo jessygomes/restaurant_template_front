@@ -43,6 +43,7 @@ export interface ReservationListItem {
   isPrivate: boolean;
   privateFrom?: string;
   privateTo?: string;
+  isFinished?: boolean; // Pour indiquer si la réservation est terminée
 
   client?: Client;
   tables: {
@@ -83,6 +84,10 @@ export interface Table {
   type: string;
   capacity: number;
   isReserved: boolean;
+  nextReservation?: {
+    date: string;
+    arrivalTime: string;
+  } | null; // Si tu veux inclure la prochaine réservation
 }
 
 export interface MenuProps {

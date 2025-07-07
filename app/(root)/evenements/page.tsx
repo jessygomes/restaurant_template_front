@@ -29,9 +29,6 @@ export default function Events() {
 
       <div className="pb-10">
         <ShowEvents />
-        {/* <h3 className="font-one text-2xl">Funky Night</h3>
-        <p>Date : Mardi 29 juillet</p>
-        <p>Description</p> */}
       </div>
 
       {/* <ReserveTableForm /> */}

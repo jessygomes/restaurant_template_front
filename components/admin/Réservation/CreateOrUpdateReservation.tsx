@@ -32,8 +32,6 @@ export default function CreateOrUpdateReservation({
   const [loading, setLoading] = useState(false);
   const [formReady, setFormReady] = useState(false);
 
-  console.log("Existing reservation:", existingResa);
-
   //! Formulaire de création ou de modification de réservation
   const form = useForm<z.infer<typeof reservationSchema>>({
     resolver: zodResolver(reservationSchema),
@@ -100,12 +98,10 @@ export default function CreateOrUpdateReservation({
     });
 
     setFormReady(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [existingResa]);
 
   //! Fonction pour rechercher un client par email
   const [searchClientQuery, setSearchClientQuery] = useState("");
-
   const [clientResults, setClientResults] = useState<Client[]>([]);
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(
     null
@@ -149,7 +145,7 @@ export default function CreateOrUpdateReservation({
     setSearchTimeout(timeout);
   }, [searchClientQuery]);
 
-  //! Liste des tables (à remplacer par une vraie liste de tables)
+  //! Liste des tables
   const [tableList, setTableList] = useState<Table[]>([]);
   const [capacityFilter, setCapacityFilter] = useState<string>("all");
   const [availableCapacities, setAvailableCapacities] = useState<number[]>([]);
@@ -192,7 +188,6 @@ export default function CreateOrUpdateReservation({
     };
 
     fetchTables();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formReady, form.watch("date"), form.watch("arrivalTime")]);
 
   //! Filtrage des tables
@@ -216,10 +211,7 @@ export default function CreateOrUpdateReservation({
 
       form.setValue("tableIds", selectedTableIds);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tableList, existingResa]);
-
-  console.log("Table list:", tableList);
 
   //! Soumission du formulaire
   const onSubmit = async (data: z.infer<typeof reservationSchema>) => {
