@@ -2,6 +2,7 @@ import HeroSection from "@/components/home/HeroSection";
 import Section2 from "@/components/home/Section2";
 import Section3 from "@/components/home/Section3";
 import Section4 from "@/components/home/Section4";
+import Section5 from "@/components/home/Section5";
 
 export default function Home() {
   return (
@@ -25,6 +26,11 @@ export default function Home() {
       <Section3 />
 
       <Section2 />
+
+      <div className=" ">
+        {" "}
+        <Section5 />
+      </div>
 
       <Section4 />
     </div>

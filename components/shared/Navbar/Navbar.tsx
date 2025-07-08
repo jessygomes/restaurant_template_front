@@ -28,41 +28,43 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav
-      className={`flex justify-between items-center py-4 px-20 transition-all duration-300 ${
-        isScrolled ? "bg-secondary-500 backdrop-blur-md" : "bg-transparent"
-      }`}
-    >
-      {" "}
-      <Link
-        href={"/"}
-        className="font-one uppercase font-bold text-3xl text-white tracking-widest hover:text-white/70 transition-all duration-300"
+    <>
+      <nav
+        className={`flex justify-between items-center py-4 px-20 transition-all duration-300 ${
+          isScrolled ? "bg-secondary-500 backdrop-blur-md" : "bg-transparent"
+        }`}
       >
-        Gleamy Food
-      </Link>
-      <ul ref={navRef} className="flex gap-8 items-center">
-        {links.map((link, index) => {
-          const isActive = pathname === link.href;
-
-          return (
-            <li
-              key={index}
-              className={`${
-                isActive
-                  ? "active font-three text-white font-bold"
-                  : "font-thin"
-              } pb-1 text-white text-sm font-three pt-1 px-2 tracking-widest hover:text-white/70 transition-all duration-300`}
-            >
-              <Link href={link.href}>{link.label}</Link>
-            </li>
-          );
-        })}
-        <Link href={"/reservation"}>
-          <div className="text-white font-one tracking-wide text-xs border px-4 py-2 hover:bg-secondary-500 transition-all ease-in-out duration-300">
-            Réserver une table
-          </div>
+        {" "}
+        <Link
+          href={"/"}
+          className="font-one uppercase font-bold text-3xl text-white tracking-widest hover:text-white/70 transition-all duration-300"
+        >
+          Gleamy Food
         </Link>
-      </ul>
-    </nav>
+        <ul ref={navRef} className="flex gap-8 items-center">
+          {links.map((link, index) => {
+            const isActive = pathname === link.href;
+
+            return (
+              <li
+                key={index}
+                className={`${
+                  isActive
+                    ? "active font-three text-white font-bold"
+                    : "font-thin"
+                } pb-1 text-white text-sm font-three pt-1 px-2 tracking-widest hover:text-white/70 transition-all duration-300`}
+              >
+                <Link href={link.href}>{link.label}</Link>
+              </li>
+            );
+          })}
+          <Link href={"/reservation"}>
+            <div className="text-white font-one tracking-wide text-xs border px-4 py-2 hover:bg-secondary-500 transition-all ease-in-out duration-300">
+              Réserver une table
+            </div>
+          </Link>
+        </ul>
+      </nav>
+    </>
   );
 }
